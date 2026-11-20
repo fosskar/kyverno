@@ -7,10 +7,6 @@ metadata:
   name: {{ template "kyverno.fullname" . }}:migrate-resources
   labels:
     {{- include "kyverno.hooks.labels" . | nindent 4 }}
-  annotations:
-    helm.sh/hook: post-upgrade
-    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded,hook-failed
-    helm.sh/hook-weight: "100"
 rules:
   - apiGroups:
     - kyverno.io
@@ -47,10 +43,6 @@ metadata:
   name: {{ template "kyverno.fullname" . }}:migrate-resources
   labels:
     {{- include "kyverno.hooks.labels" . | nindent 4 }}
-  annotations:
-    helm.sh/hook: post-upgrade
-    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded,hook-failed
-    helm.sh/hook-weight: "100"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -67,10 +59,6 @@ metadata:
   namespace: {{ template "kyverno.namespace" . }}
   labels:
     {{- include "kyverno.hooks.labels" . | nindent 4 }}
-  annotations:
-    helm.sh/hook: post-upgrade
-    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
-    helm.sh/hook-weight: "100"
 automountServiceAccountToken: false
 ---
 apiVersion: batch/v1
