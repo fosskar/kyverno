@@ -27,4 +27,22 @@ for kind in ServiceAccount ClusterRole ClusterRoleBinding Job; do
     exit 1
   fi
 done
+if ! grep -q '^  name: kyverno-migrate-resources$' <<< "${render##*kind: Job}"; then
+  printf 'Migrate-resources Job must have a fixed name by default\n' >&2
+  exit 1
+fi
 printf 'Migrate-resources hook resources verified\n'
+
+# opt-in for argo cd, which can read the status of the previous same-named job (#17741)
+render="$("${HELM}" template kyverno "${ROOT_DIR}/charts/kyverno" \
+  --namespace kyverno --kube-version "${KUBE_VERSION}" \
+  --set crds.migration.generateName=true --set crds.migration.ttlSecondsAfterFinished=300 \
+  --show-only templates/hooks/post-upgrade-migrate-resources.yaml)"
+job="${render##*kind: Job}"
+if ! grep -q '^  generateName: kyverno-migrate-resources-$' <<< "${job}" ||
+   grep -q '^  name: ' <<< "${job}" ||
+   ! grep -q '^  ttlSecondsAfterFinished: 300$' <<< "${job}"; then
+  printf 'Unexpected migrate-resources Job metadata with generateName enabled\n' >&2
+  exit 1
+fi
+printf 'Migrate-resources generateName opt-in verified\n'

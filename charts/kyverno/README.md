@@ -369,6 +369,8 @@ The default audience is Kyverno-specific so leaked tokens are not accepted by th
 | crds.annotations | object | `{}` | Additional CRDs annotations |
 | crds.customLabels | object | `{}` | Additional CRDs labels |
 | crds.migration.enabled | bool | `true` | Enable CRDs migration using helm post upgrade hook |
+| crds.migration.generateName | bool | `false` | Use `metadata.generateName` instead of a fixed name for the migration Job. Only for Argo CD, which can report a Job that reuses the name of the previous run as succeeded before it ran. Helm does not support `generateName`, keep this disabled when installing with Helm. |
+| crds.migration.ttlSecondsAfterFinished | int | `nil` | Seconds after the migration Job finishes before it is auto-deleted. Set this together with `generateName`, otherwise finished Jobs are never removed. |
 | crds.migration.extraArgs | object | `{}` | Additional CLI flags passed to the migration job |
 | crds.migration.resources | list | `["globalcontextentries.kyverno.io","updaterequests.kyverno.io","deletingpolicies.policies.kyverno.io","generatingpolicies.policies.kyverno.io","imagevalidatingpolicies.policies.kyverno.io","mutatingpolicies.policies.kyverno.io","namespaceddeletingpolicies.policies.kyverno.io","namespacedgeneratingpolicies.policies.kyverno.io","namespacedimagevalidatingpolicies.policies.kyverno.io","namespacedmutatingpolicies.policies.kyverno.io","namespacedvalidatingpolicies.policies.kyverno.io","policyexceptions.policies.kyverno.io","validatingpolicies.policies.kyverno.io"]` | Resources to migrate |
 | crds.migration.image.registry | string | `nil` | Image registry |

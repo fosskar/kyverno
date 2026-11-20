@@ -263,6 +263,15 @@ crds:
     # -- Enable CRDs migration using helm post upgrade hook
     enabled: true
 
+    # -- Use `metadata.generateName` instead of a fixed name for the migration Job.
+    # Only for Argo CD, which can report a Job that reuses the name of the previous run as succeeded before it ran.
+    # Helm does not support `generateName`, keep this disabled when installing with Helm.
+    generateName: false
+
+    # -- (int) Seconds after the migration Job finishes before it is auto-deleted.
+    # Set this together with `generateName`, otherwise finished Jobs are never removed.
+    ttlSecondsAfterFinished: ~
+
     # -- Additional CLI flags passed to the migration job
     extraArgs: {}
 

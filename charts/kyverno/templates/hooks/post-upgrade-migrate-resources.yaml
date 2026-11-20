@@ -64,7 +64,11 @@ automountServiceAccountToken: false
 apiVersion: batch/v1
 kind: Job
 metadata:
+  {{- if .Values.crds.migration.generateName }}
+  generateName: {{ template "kyverno.fullname" . }}-migrate-resources-
+  {{- else }}
   name: {{ template "kyverno.fullname" . }}-migrate-resources
+  {{- end }}
   namespace: {{ template "kyverno.namespace" . }}
   labels:
     {{- include "kyverno.hooks.labels" . | nindent 4 }}
@@ -74,6 +78,9 @@ metadata:
     helm.sh/hook-weight: "200"
 spec:
   backoffLimit: 2
+  {{- with .Values.crds.migration.ttlSecondsAfterFinished }}
+  ttlSecondsAfterFinished: {{ . }}
+  {{- end }}
   template:
     {{- if or .Values.crds.migration.podAnnotations .Values.crds.migration.podLabels }}
     metadata:
